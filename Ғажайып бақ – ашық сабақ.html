@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="kk"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ғажайып бақ – ашық сабақ</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#fff8e6;--fg:#3b2a10;--card:#fff;--ac:#d98e00;--ok:#bfe8c0;--no:#f5b5b5;--ln:#e8d3a0}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#241b0c;--fg:#fff1cc;--card:#3a2d14;--ok:#2f6b34;--no:#7a2f2f;--ln:#5a4720}}
+:root[data-theme=dark]{--bg:#241b0c;--fg:#fff1cc;--card:#3a2d14;--ok:#2f6b34;--no:#7a2f2f;--ln:#5a4720}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,sans-serif}
+main{max-width:900px;margin:auto;padding:10px}
+h1{font-size:22px;text-align:center;margin:6px}
+.teams{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.team{flex:1;min-width:150px;background:var(--card);border:2px solid var(--ac);border-radius:14px;padding:8px;text-align:center}
+.team b{font-size:16px}.team.on{background:var(--ac);color:#fff}.team.on button{color:#fff;border-color:#fff}.team .n{font-size:34px;font-weight:800}
+.team button{font-size:18px;padding:6px 14px;margin:2px;border-radius:10px;border:2px solid var(--ac);background:transparent;color:var(--fg);cursor:pointer}
+nav{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+nav button{flex:1;min-width:140px;padding:10px;font-size:15px;border-radius:10px;border:2px solid var(--ln);background:var(--card);color:var(--fg);cursor:pointer}
+nav button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.card{background:var(--card);border:2px solid var(--ln);border-radius:16px;padding:18px;min-height:260px}
+.card h2{font-size:26px;margin:4px 0 14px}
+.opts{display:flex;gap:10px;flex-wrap:wrap}
+.opts button,.ord button,.dis button{flex:1;min-width:200px;font-size:20px;padding:16px;border-radius:12px;border:2px solid var(--ac);background:transparent;color:var(--fg);cursor:pointer;margin:4px 0}
+.ok{background:var(--ok)!important}.no{background:var(--no)!important}
+.ctl{display:flex;justify-content:space-between;align-items:center;margin-top:12px;gap:8px}
+.ctl button,.tm{padding:10px 16px;font-size:16px;border-radius:10px;border:2px solid var(--ac);background:var(--ac);color:#fff;cursor:pointer}
+.msg{font-size:20px;min-height:28px;margin-top:8px;font-weight:700}
+.ord{display:flex;flex-direction:column}
+</style></head><body><main>
+<h1>🏺 «Ғажайып бақ» – қазақ ертегісі</h1>
+<div class="teams" id="teams"></div>
+<div class="msg" id="turn" style="text-align:center"></div>
+<nav id="nav"></nav>
+<div class="card" id="card"></div>
+</main>
+<script>
+const G=[['🤝','Достық'],['⚖️','Адалдық'],['⚒️','Еңбек'],['💛','Мейірім']],S=[0,0,0,0];let turn=0;
+const tm=document.getElementById('teams');
+G.forEach((g,i)=>{tm.insertAdjacentHTML('beforeend',`<div class="team" id="t${i}"><b>${g[0]} ${i+1}-топ: «${g[1]}»</b><div class="n" id="s${i}">0</div><button onclick="sc(${i},1)">+1</button><button onclick="sc(${i},-1)">−1</button></div>`)});
+function sc(t,d){S[t]=Math.max(0,S[t]+d);document.getElementById('s'+t).textContent=S[t]}
+function setTurn(i){turn=i%4;G.forEach((g,k)=>document.getElementById('t'+k).classList.toggle('on',k==turn));document.getElementById('turn').textContent=T[cur]&&T[cur].type!='d'?'👉 Кезек: «'+G[turn][1]+'» тобында':''}
+const T=[
+{n:'✅ Дұрыс па, бұрыс па?',type:'q',opts:['Дұрыс','Бұрыс'],items:[
+['Асан мен Қасен екеуі де бай болған.',1],['Екеуінің де әйелдері қайтыс болған.',0],['Қасеннің малы жұттан қырылып қалды.',0],
+['Асан досына жерінің жартысын берді.',0],['Қасен алтынды өзіне қалдырды.',1],['Алтынды балаларына берді.',0]]},
+{n:'🗣 Кім айтты?',type:'q',opts:['Асан','Қасен'],items:[
+['«Менің егіндік жерімнің жартысы сенікі болсын.»',0],['«Сүйінші, Асан! Мен сенің жеріңнен қазан тауып алдым.»',1],
+['«Ол алтын менікі емес, сенікі.»',0],['«Сен маған жеріңді бергенмен, астындағы қазынасын берген жоқсың ғой.»',1],
+['«Сол екеуінің басын қосайық та алтынды соларға берейік.»',0]]},
+{n:'🔢 Оқиғаны ретке қой',type:'o',items:['Қасеннің малы қырылды.','Асан жерінің жартысын берді.','Қасен кетпенімен алтын толы қазан тапты.','Екі дос алтынға таласты.','Алтынды балаларына берді.']},
+{n:'💭 Топтық тапсырма',type:'d',items:[
+['Достық',['Асан Қасенге қалай көмектесті?','Нағыз дос қандай болу керек? Ертегіден мысал келтір.']],
+['Адалдық',['Қасен алтынды неге өзіне алмады?','Егер екеуі адал болмаса, не болар еді?']],
+['Еңбек',['Алтын қайдан табылды? Еңбектің рөлі қандай?','Асан: «Қазына еңбек еткен адамдікі» деді. Қалай түсінесің?']],
+['Мейірім',['Асан жылап келген досын көргенде не істеді?','Біз мейірімді болу үшін не істей аламыз?']]]}
+];
+const card=document.getElementById('card'),nav=document.getElementById('nav');let cur=0,idx=0,tmr=null;
+T.forEach((t,i)=>{const b=document.createElement('button');b.textContent=t.n;b.onclick=()=>go(i);nav.appendChild(b)});
+function go(i){cur=i;idx=0;turn=0;clearInterval(tmr);[...nav.children].forEach((b,j)=>b.className=j==i?'on':'');render()}
+function render(){const t=T[cur];card.innerHTML='';setTurn(turn);
+if(t.type=='q'){const it=t.items[idx];
+card.innerHTML=`<small>${idx+1} / ${t.items.length}</small><h2>${it[0]}</h2><div class="opts"></div><div class="msg" id="m"></div><div class="ctl"><button onclick="idx=Math.max(0,idx-1);render()">◀ Артқа</button><button onclick="nx()">Келесі ▶</button></div>`;
+const o=card.querySelector('.opts');
+t.opts.forEach((x,k)=>{const b=document.createElement('button');b.textContent=x;b.onclick=()=>{
+if(k==it[1]){b.classList.add('ok');m.textContent='🎉 Дұрыс! Жарайсың!'}else{b.classList.add('no');m.textContent='🤔 Қайта ойлан!'}};o.appendChild(b)})}
+if(t.type=='o'){const ord=t.items.map((x,i)=>[x,i]).sort(()=>Math.random()-.5);let nxt=0;
+card.innerHTML=`<h2>Оқиғаларды ретімен бас: 1 → 5</h2><div class="ord"></div><div class="msg" id="m"></div><div class="ctl"><button onclick="render()">🔄 Қайта</button></div>`;
+const o=card.querySelector('.ord');
+ord.forEach(([x,i])=>{const b=document.createElement('button');b.textContent=x;b.onclick=()=>{if(b.classList.contains('ok'))return;
+if(i==nxt){nxt++;b.classList.add('ok');b.textContent=nxt+'. '+x;if(nxt==t.items.length)m.textContent='🏆 Керемет! Барлығы дұрыс!'}
+else{b.classList.add('no');m.textContent='❌ Бұл кейін болды, тағы көр';setTimeout(()=>b.classList.remove('no'),600)}};o.appendChild(b)})}
+if(t.type=='d'){card.innerHTML=`<h2>Топ өз тапсырмасын таңдасын 👇</h2><div class="dis"></div><div id="m" style="font-size:24px;font-weight:700;margin-top:8px"></div><div class="ctl"><span></span><button class="tm" onclick="timer()">⏱ 60 секунд: <span id="tt">60</span></button></div>`;
+const o=card.querySelector('.dis');
+t.items.forEach((x,i)=>{const b=document.createElement('button');b.textContent=G[i][0]+' '+(i+1)+'-топ: '+x[0];b.onclick=()=>{m.innerHTML='<div>'+G[i][0]+' «'+x[0]+'»</div>'+x[1].map((q,k)=>'<div style="margin-top:8px">'+(k+1)+'. '+q+'</div>').join('');b.classList.add('ok');timer()};o.appendChild(b)})}}
+function nx(){const t=T[cur];if(idx<t.items.length-1){idx++;turn++;render()}else m.textContent='✔ Тапсырма аяқталды! Келесі бөлімге өтіңіз.'}
+function timer(){clearInterval(tmr);let s=60;tt.textContent=s;tmr=setInterval(()=>{s--;tt.textContent=s;if(s<=0)clearInterval(tmr)},1000)}
+go(0);
+</script></body></html>
